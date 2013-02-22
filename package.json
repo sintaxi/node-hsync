@@ -1,0 +1,8 @@
+{
+  "name": "hsync",
+  "version": "0.0.1",
+  "author": "Robert Hurst <robertwhurst@gmail.com>",
+  "dependencies": {
+    "async": "0.2.5"
+  }
+}
