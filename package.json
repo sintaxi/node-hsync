@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "author": "Robert Hurst <robertwhurst@gmail.com>",
   "main": "./bsync",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha"
+  },
   "dependencies": {
     "async": "0.2.5"
   },
