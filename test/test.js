@@ -35,9 +35,13 @@ describe('eachLimitRetry', function() {
 
     function worker(item, attempt, done) {
       setTimeout(function() {
-        if(attempt > 1) { i += 1; done(); }
-        else if(item === false) { done(false); }
-        else { done(); }
+        if(attempt > 1) { 
+          i += 1; done(); 
+        } else if (item === false) {
+          done(false);
+        } else { 
+          done(); 
+        }
       }, 0);
     }
 
