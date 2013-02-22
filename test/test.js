@@ -1,7 +1,7 @@
 var config, hsync;
 
+hsync = require('../');
 config = require('./config.json');
-hsync = require('../hsync.js');
 
 describe('eachLimitRetry', function() {
 

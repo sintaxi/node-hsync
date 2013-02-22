@@ -44,7 +44,7 @@ function eachLimitRetry(data, limit, worker, done) {
    * Processes the data
    */
   function exec() {
-    async.eachLimit(data, limit, hsyncWorker, hsyncDone);
+    hsync.eachLimit(data, limit, hsyncWorker, hsyncDone);
   }
 
   /**

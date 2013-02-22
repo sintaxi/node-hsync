@@ -2,7 +2,11 @@
   "name": "hsync",
   "version": "0.1.0",
   "author": "Robert Hurst <robertwhurst@gmail.com>",
+  "main": "./bsync",
   "dependencies": {
     "async": "0.2.5"
+  },
+  "devDependencies": {
+    "mocha": "1.8.1"
   }
 }
