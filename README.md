@@ -43,5 +43,15 @@ OR, if you just want to start playing with the library run...
       // finished all the tasks
     })
     
+### Test
+
+Install dev dependencies...
+
+    npm install
+
+Run the tests...
+
+    npm test
+
     
     
