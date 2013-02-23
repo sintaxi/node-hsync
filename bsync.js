@@ -34,7 +34,7 @@ function eachLimitRetry(data, limit, worker, done) {
 
   //wrap the data so we can count the executions
   for(dI = 0; dI < data.length; dI += 1) {
-    data[dI] = { "attempts": 0, "value": data[dI] };
+    data[dI] = { "attempt": 0, "value": data[dI] };
   }
 
   //start processing the data
@@ -54,7 +54,7 @@ function eachLimitRetry(data, limit, worker, done) {
     var index;
 
     //iterate attempts and execute the worker
-    item.attempts += 1;
+    item.attempt += 1;
     return worker(item.value, item.attempt, hsyncCallback);
 
     /**

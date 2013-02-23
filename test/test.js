@@ -1,53 +1,88 @@
-var config, hsync;
-
-hsync = require('../');
-config = require('./config.json');
+var hsync   = require('../')
+var should  = require("should")
 
 describe('eachLimitRetry', function() {
-
-  it('should process in parallel with limit', function(ok) {
-    var test = config.ok10, i = 0;
-
-    hsync.eachLimitRetry(test.data, test.limit, worker, complete);
-
-    if(i === 0) { ok(new Error('eachLimitRetry must run.')); }
-
-    function worker(item, attempts, done) {
-      i += 1;
-      setTimeout(function() {
-        if(i === 1 && i !== test.limit) { ok(new Error('eachLimitRetry must process ' + test.limit + 'at a time.')); }
-        done();
-      }, 0);
+  
+  /**
+   *
+   * This iterator will base its retry attempts based on
+   * the item string that is passed in.
+   *
+   *  "fail:never"  will pass every time.
+   *  "fail:always" will fail every time and stop retrying after 3 attempts.
+   *  "fail:<n>"    will fail <n> number of times before passing.
+   *
+   */
+  var iterator = function(item, attempt, next){
+    process.stdout.write(".")
+    
+    var pass = function(){ 
+      process.stdout.write("p")
+      next(null)
     }
-
-    function complete(err) {
-      var l;
-      l = test.data.length;
-      if(i !== l) { ok(new Error('Worker should execute ' + l + ' times.')); }
-      else { ok(); }
+    
+    var retry = function(){ 
+      process.stdout.write("r")
+      next(false)
     }
-  });
-
-  it('should be able to reprocess failed data.', function(ok) {
-    var test = config.retry5, i = 0;
-
-    hsync.eachLimitRetry(test.data, test.limit, worker, done);
-
-    function worker(item, attempt, done) {
-      setTimeout(function() {
-        if(attempt > 1) { 
-          i += 1; done(); 
-        } else if (item === false) {
-          done(false);
-        } else { 
-          done(); 
+    
+    var fail = function(){ 
+      process.stdout.write("f")
+      next("item failed")
+    }
+    
+    setTimeout(function(){
+      if(item == "fail:never"){
+        pass() 
+      }else{ 
+        if(item == "fail:always"){
+          attempt < 3 ? retry() : fail()
+        }else{          
+          var timesToFail = parseInt(item.split(":")[1])
+          attempt <= timesToFail ? retry() : pass()
         }
-      }, 0);
-    }
+      }
+    }, 10)
+  }
 
-    function done(err) {
-      if(i !== 5) { console.log(i); ok(new Error('Worker should retry 5 times.')); }
-      else { ok(); }
-    }
-  });
-});
+  it('should process in series with limit 1', function(done) {
+    var arr = ["fail:never", "fail:never", "fail:never"]
+    hsync.eachLimitRetry(arr, 1, iterator, function(errors, retries){
+      should.not.exist(errors)
+      done()
+    })
+  })
+  
+  it('should process in paralell with limit 3', function(done) {
+    var arr = ["fail:never", "fail:never", "fail:never"]
+    hsync.eachLimitRetry(arr, 3, iterator, function(errors, retries){
+      should.not.exist(errors)
+      done()
+    })
+  })
+  
+  it('should process in paralell with limit 2', function(done) {
+    var arr = ["fail:never", "fail:never", "fail:never"]
+    hsync.eachLimitRetry(arr, 2, iterator, function(errors, retries){
+      should.not.exist(errors)
+      done()
+    })
+  })
+  
+  it('should eventually pass', function(done) {
+    var arr = ["fail:2", "fail:50", "fail:1"]
+    hsync.eachLimitRetry(arr, 2, iterator, function(errors, retries){
+      should.not.exist(errors)
+      done()
+    })
+  })
+  
+  it('should not pass ', function(done) {
+    var arr = ["fail:2", "fail:always", "fail:5"]
+    hsync.eachLimitRetry(arr, 2, iterator, function(errors, retries){
+      should.exist(errors)
+      done()
+    })
+  })
+  
+})
