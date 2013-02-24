@@ -1,8 +1,20 @@
 {
   "name": "hsync",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "main": "./hsync",
   "author": "Robert Hurst <robertwhurst@gmail.com>",
+  "contributors": [
+    { "name": "Robert Hurst", "email": "robertwhurst@gmail.com" },
+    { "name": "Brock Whitten", "email": "brock@chloi.io" }
+  ],
+  "scripts": {
+    "test": "./node_modules/.bin/mocha"
+  },
   "dependencies": {
     "async": "0.2.5"
+  },
+  "devDependencies": {
+    "mocha": "1.8.1",
+    "should": "1.2.2"
   }
 }
